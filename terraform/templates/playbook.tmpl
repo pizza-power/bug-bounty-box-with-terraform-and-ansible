@@ -1,0 +1,115 @@
+---
+- name: Update/upgrade and install packages on remote server.
+  hosts: ${ ip_address }
+  become: true
+  tasks:
+    - name: Update
+      apt: update_cache=yes force_apt_get=yes cache_valid_time=3600
+
+    - name: Upgrade all packages on servers
+      apt: upgrade=dist force_apt_get=yes
+
+    - name: Install packages
+      apt:
+        pkg:
+          - ca-certificates
+          - curl
+          - apt-transport-https
+          - lsb-release
+          - gnupg
+          - software-properties-common
+          - python3-pip
+          - unzip
+          - tar
+          - tmux
+          - gobuster
+          - wireguard
+          - wireguard-tools
+          - john
+          - hashcat
+          - nikto
+          - ruby-full
+          - ruby-railties
+          - hydra
+          - cewl
+          - whois
+          - squid
+          - nmap
+          - git
+          - python3-impacket
+
+        update_cache: true
+
+    - name: Install Golang
+      shell: |
+        wget https://go.dev/dl/go1.18.linux-amd64.tar.gz
+        tar -xvf go1.18.linux-amd64.tar.gz
+        chown -R root:root ./go
+        mv go /usr/local
+        echo "export GOPATH=$HOME/go" >> $HOME/.bashrc
+        echo "export PATH=$PATH:/usr/local/go/bin:$GOPATH/bin" >> $HOME/.bashrc
+      args:
+        executable: /bin/bash
+
+    - name: Install Amass
+      shell: |
+        curl -s https://api.github.com/repos/OWASP/Amass/releases/latest | grep "browser_download_url.*linux_amd64.zip" | cut -d : -f 2,3 | tr -d \" | wget -i -
+        unzip amass* 
+        chmod +x ./amass_linux_amd64/amass 
+        mv ./amass_linux_amd64/amass /usr/bin/
+      args:
+        executable: /bin/bash
+
+    - name: Install Nuclei
+      shell: |
+        curl -s https://api.github.com/repos/projectdiscovery/nuclei/releases/latest | grep "browser_download_url.*linux_amd64.zip" | cut -d : -f 2,3 | tr -d \" | wget -i -
+        unzip nuclei* nuclei
+        chmod +x nuclei
+        mv nuclei /usr/bin/
+      args:
+        executable: /bin/bash
+
+    - name: Install FFUF
+      shell: |
+        curl -s https://api.github.com/repos/ffuf/ffuf/releases/latest | grep "browser_download_url.*linux_amd64.tar.gz" | cut -d : -f 2,3 | tr -d \" | wget -i -
+        tar xzf ffuf* ffuf
+        chmod +x ffuf
+        mv ffuf /usr/bin/
+      args:
+        executable: /bin/bash
+
+    - name: Install Subfinder
+      shell: |
+        curl -s https://api.github.com/repos/projectdiscovery/subfinder/releases/latest | grep "browser_download_url.*linux_amd64.zip" | cut -d : -f 2,3 | tr -d \" | wget -i -
+        unzip subfinder* subfinder
+        chmod +x subfinder
+        mv subfinder /usr/bin/
+      args:
+        executable: /bin/bash
+
+    - name: Install Aquatone
+      shell: |
+        curl -s https://api.github.com/repos/michenriksen/aquatone/releases/latest | grep "browser_download_url.*linux_amd64-*" | cut -d : -f 2,3 | tr -d \" | wget -i -
+        unzip aquatone* aquatone
+        chmod +x aquatone 
+        mv aquatone /usr/bin
+      args:
+        executable: /bin/bash
+
+    - name: Install getallurls (gau)
+      shell: |
+        curl -s https://api.github.com/repos/lc/gau/releases/latest | grep "browser_download_url.*linux_amd64.tar.gz" | cut -d : -f 2,3 | tr -d \" | wget -i -
+        tar xzf gau* gau 
+        chmod +x gau 
+        mv gau /usr/bin
+      args:
+        executable: /bin/bash
+
+    - name: Reboot the box
+      reboot:
+        msg: "Reboot initiated by Ansible for updates"
+        connect_timeout: 5
+        reboot_timeout: 300
+        pre_reboot_delay: 0
+        post_reboot_delay: 30
+        test_command: uptime
