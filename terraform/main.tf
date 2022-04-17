@@ -43,7 +43,7 @@ resource "local_file" "ansible_config" {
   filename        = "../ansible/ansible.cfg"
 }
 
-# Create an Ansible playbook from a template file
+# Create an Ansible inventory from a template file
 resource "local_file" "ansible_inventory" {
   content         = linode_instance.bugbountybox.ip_address
   file_permission = "0640"
