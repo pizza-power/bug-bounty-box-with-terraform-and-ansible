@@ -1,4 +1,4 @@
-variable "token" {
+variable "LINODE_API_TOKEN" {
   type        = string
   description = "Linode APIv4 token."
   sensitive   = true
@@ -20,7 +20,7 @@ variable "region" {
   description = "Region where the VM will be created."
 }
 
-variable "root_pass" {
+variable "ROOT_PASS" {
   type        = string
   description = "Password for the root account on this VM."
   sensitive   = true
