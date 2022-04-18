@@ -9,7 +9,7 @@ terraform {
 
 # Configure the Linode Provider
 provider "linode" {
-  token = var.token
+  token = var.LINODE_API_TOKEN
 }
 
 # Create a Linode
@@ -18,7 +18,7 @@ resource "linode_instance" "bugbountybox" {
   label     = var.label
   region    = var.region
   type      = var.type
-  root_pass = var.root_pass
+  root_pass = var.ROOT_PASS
 }
 
 # Create an Ansible playbook from a template file
